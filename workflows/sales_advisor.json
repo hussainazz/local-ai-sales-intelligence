@@ -1,0 +1,108 @@
+{
+  "name": "Local sales advisor - submit question",
+  "nodes": [
+    {
+      "id": "c03ea51c-e1bb-59bf-a0fe-e200db4963dd",
+      "name": "Sales question",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "sales-advisor",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "configure-after-import",
+          "name": "Sales webhook access"
+        }
+      },
+      "webhookId": "d689c234-30fa-5d4e-b48a-c532c6d1e4ee"
+    },
+    {
+      "id": "8102b326-185a-52c9-bdfb-be737c22e8ae",
+      "name": "Submit local agent",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://api:8000/api/chat/' + encodeURIComponent($json.body.dataset_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { question: $json.body.question, filters: $json.body.filters ?? {}, use_llm: $json.body.use_llm === true } }}"
+      },
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "configure-after-import",
+          "name": "Sales backend API"
+        }
+      }
+    },
+    {
+      "id": "f266d756-df2a-5ad6-8414-cc2dc3770927",
+      "name": "Return task receipt",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 202
+        }
+      },
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Sales question": {
+      "main": [
+        [
+          {
+            "node": "Submit local agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Submit local agent": {
+      "main": [
+        [
+          {
+            "node": "Return task receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "tags": []
+}

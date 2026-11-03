@@ -1,0 +1,105 @@
+{
+  "name": "Local sales advisor - task status",
+  "nodes": [
+    {
+      "id": "ebbd325c-c3f5-52db-9b74-423bc5b0b376",
+      "name": "Task status",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "parameters": {
+        "httpMethod": "GET",
+        "path": "sales-status",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "position": [
+        0,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "configure-after-import",
+          "name": "Sales webhook access"
+        }
+      },
+      "webhookId": "99815ba0-2331-5f9b-bbd4-93f58dabd1e9"
+    },
+    {
+      "id": "9c12a5c5-465a-5641-b65e-ede73af3beda",
+      "name": "Read local task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'http://api:8000/api/tasks/' + encodeURIComponent($json.query.task_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "position": [
+        260,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "configure-after-import",
+          "name": "Sales backend API"
+        }
+      }
+    },
+    {
+      "id": "d0d34909-9f63-5c10-8bca-b31cc749f541",
+      "name": "Return status and evidence",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "position": [
+        520,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Task status": {
+      "main": [
+        [
+          {
+            "node": "Read local task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read local task": {
+      "main": [
+        [
+          {
+            "node": "Return status and evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "tags": []
+}

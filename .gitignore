@@ -1,0 +1,14 @@
+.venv/
+.env
+.cache/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+data/
+notebook_data/
+notebook_project/
+frontend/node_modules/
+frontend/dist/
+*.egg-info/
+*.zip

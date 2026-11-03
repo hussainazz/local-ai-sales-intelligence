@@ -1,0 +1,10 @@
+.git
+.env
+.venv
+data
+notebook_data
+frontend
+tests
+notebooks
+sample_data
+.cache

@@ -1,0 +1,33 @@
+[build-system]
+requires = ["hatchling>=1.26"]
+build-backend = "hatchling.build"
+
+[project]
+name = "local-ai-sales-intelligence"
+version = "0.1.0"
+description = "Local, evidence-based sales analysis with a chapter-by-chapter notebook and n8n integration"
+requires-python = ">=3.12,<3.15"
+dependencies = [
+  "fastapi>=0.115,<1", "uvicorn>=0.34,<1", "pydantic>=2.10,<3",
+  "pydantic-settings>=2.7,<3", "python-multipart>=0.0.20,<1",
+  "pandas>=2.2,<4", "numpy>=2,<3", "scipy>=1.14,<2", "statsmodels>=0.14,<1",
+  "scikit-learn>=1.6,<2", "openpyxl>=3.1,<4", "xlrd>=2.0,<3", "olefile>=0.47,<1",
+  "pyarrow>=19,<25", "plotly>=6,<7", "httpx>=0.28,<1",
+  "langchain-ollama>=0.3,<2", "langgraph>=0.3,<2", "langgraph-checkpoint-sqlite>=2,<4",
+  "faiss-cpu>=1.10,<2", "pypdf>=5,<7", "python-docx>=1.1,<2",
+  "jdatetime>=5,<6", "psutil>=6,<8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<10", "ruff>=0.11,<1", "nbformat>=5.10,<6", "nbclient>=0.10,<1", "jupyterlab>=4,<5", "ipykernel>=6,<8"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+filterwarnings = ["ignore:.*builtin type.*:DeprecationWarning"]
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.hatch.build.targets.wheel]
+packages = ["sales_intelligence"]

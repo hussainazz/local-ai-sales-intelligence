@@ -1,0 +1,110 @@
+{
+  "name": "Local sales advisor - daily dashboard",
+  "nodes": [
+    {
+      "id": "e42ed7cc-c9ce-534e-ba17-cb153c2dba88",
+      "name": "Daily local report",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "id": "508d1fef-b815-50b1-a774-5153471417ef",
+      "name": "Choose approved dataset",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "dataset",
+              "name": "dataset_id",
+              "type": "string",
+              "value": "REPLACE_WITH_APPROVED_DATASET_UUID"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "position": [
+        250,
+        0
+      ]
+    },
+    {
+      "id": "ffbe719a-3827-5ba5-b232-da1018a28a65",
+      "name": "Queue dashboard report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'http://api:8000/api/analyze/' + encodeURIComponent($json.dataset_id) }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "timeout": 15000
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {} }}"
+      },
+      "position": [
+        500,
+        0
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "configure-after-import",
+          "name": "Sales backend API"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Daily local report": {
+      "main": [
+        [
+          {
+            "node": "Choose approved dataset",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Choose approved dataset": {
+      "main": [
+        [
+          {
+            "node": "Queue dashboard report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Tehran",
+    "saveDataSuccessExecution": "none",
+    "saveDataErrorExecution": "none",
+    "saveManualExecutions": false
+  },
+  "pinData": {},
+  "tags": []
+}
